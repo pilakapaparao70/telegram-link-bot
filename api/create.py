@@ -4,7 +4,11 @@ from itsdangerous import TimestampSigner
 from urllib.parse import quote_plus
 
 def handler(request):
-    data = request.get_json()
+    try:
+        body = request.body or b""
+        data = json.loads(body)
+    except:
+        return {"statusCode": 400, "body": "Invalid JSON"}
 
     file_path = data.get("file_path")
     owner_id = data.get("owner_id", "")
@@ -21,7 +25,6 @@ def handler(request):
 
     payload = json.dumps({"file_path": file_path, "owner_id": owner_id})
     signed = signer.sign(payload.encode()).decode()
-
     token = quote_plus(signed)
 
     return {
@@ -33,3 +36,4 @@ def handler(request):
             "expires_in": expire
         })
     }
+
