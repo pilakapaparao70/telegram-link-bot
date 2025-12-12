@@ -38,3 +38,4 @@ def handler(request):
         "statusCode": 302,
         "headers": {"Location": download_url}
     }
+
